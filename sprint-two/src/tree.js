@@ -15,7 +15,6 @@ treeMethods.addChild = function(value){
 };
 
 treeMethods.contains = function(target){
-  debugger;
   if(this.value === target){
     return true;
   }else{
