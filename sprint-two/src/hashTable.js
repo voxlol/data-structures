@@ -12,7 +12,6 @@ HashTable.prototype.insert = function(k, v){
 };
 
 HashTable.prototype.retrieve = function(k){
-  debugger;
   var i = getIndexBelowMaxForKey(k, this._limit);
   return this._storage[i][k];
 };
