@@ -38,6 +38,11 @@ var LinkedList = function(){
     // Current head point to the heads next
     var returnVal = this.head.value;
     this.head = this.head.next;
+    if(this.head === null){
+      this.tail = null;
+      return returnVal;
+    }
+    // Case where head exists after reassignment
     this.head.previous.next = null;
     this.head.previous = null;
     return returnVal;
@@ -76,7 +81,7 @@ var Node = function(value){
 
   node.value = value;
   node.next = null;
-  next.previous = null;
+  node.previous = null;
 
   return node;
 };
