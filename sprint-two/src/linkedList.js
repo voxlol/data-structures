@@ -1,7 +1,23 @@
+//Implements a doubly linked list
+
 var LinkedList = function(){
   var list = {};
   list.head = null;
   list.tail = null;
+
+
+  list.addtoHead = function(value){
+    var newNode = Node(value);
+    if(this.head === null && this.tail === null){
+      this.head = newNode;
+      this.tail = newNode;
+    }else{
+      newNode.next = this.head;
+      this.head.previous = newNode;
+      this.head = newNode;
+    }
+
+  };
 
   list.addToTail = function(value){
     // Make a node
@@ -13,17 +29,28 @@ var LinkedList = function(){
       this.tail = newNode;
     }else{
       this.tail.next = newNode;
+      this.tail.next.previous = this.tail;
       this.tail = newNode;
     }
-
   };
 
   list.removeHead = function(){
     // Current head point to the heads next
     var returnVal = this.head.value;
     this.head = this.head.next;
+    this.head.previous.next = null;
+    this.head.previous = null;
     return returnVal;
   };
+
+
+  list.removeTail = function(){
+    this.tail = this.tail.previous;
+    this.tail.next.previous = null;
+    this.tail.next = null;
+
+  };
+
 
   list.contains = function(target){
     //debugger;
@@ -49,6 +76,7 @@ var Node = function(value){
 
   node.value = value;
   node.next = null;
+  next.previous = null;
 
   return node;
 };
