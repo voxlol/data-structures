@@ -7,57 +7,75 @@ var HashTable = function(){
 
 HashTable.prototype.insert = function(k, v){
   var i = getIndexBelowMaxForKey(k, this._limit);
+//  if(i===15)debugger;
   // If filled + 1 is less than 75%, normal filling
+
   while(true){
     if(this._storage.get(i)){ // Checking for existence
       i++;
-      if(i = this._limit)
+      if(i === this._limit)
         i = 0;
     }else{  // Case where it's not filled
-      this._storage.set(i, {k : v});
+      var insertObj = {};
+      insertObj[k] = v;
+      this._storage.set(i, insertObj);
       this._filled++;
       if(this._filled / this._limit >= 0.75){  // Test to see if over 75% filled
-        doubleTableSize();
+        this.resize(2);
       }
       break;
     }
   }
 };
 
-HashTable.prototype.doubleSize = function(){
-  this._limit = this._limit * 2;           // Double the Size for new LimitedArray
-  var newStorage = LimitedArray(newLimit);     // Create the new LimitedArray
-  this._limit = newLimit;
+HashTable.prototype.resize = function(scale){
+  //this._limit = this._limit * scale;           // Double the Size for new LimitedArray
+//  var newStorage = LimitedArray(this._limit);     // Create the new LimitedArray
+  var tempHashTable = new HashTable();
+  tempHashTable._limit = this._limit * scale;
+  tempHashTable._storage = LimitedArray(tempHashTable._limit);
 
   this._storage.each(function(element){   // Place the old items into the new storage
-    var key = Object.keys(element);
-    newStorage.insert(key[0], element[key]);
+    if(element !== null && element !== undefined){
+      var key = Object.keys(element);
+      if(key.length > 0){
+        tempHashTable.insert(key[0], element[key]);
+      }
+    }
+
   });
-
   // Set the current hash to the new limit & storage
-  this._storage = newStorage;
-}
-
-HashTable.prototype.halfSize = function(){
-  var newLimit = this._limit * 0.5;           // Double the Size for new LimitedArray
-  var newStorage = LimitedArray(newLimit);     // Create the new LimitedArray
-  this._limit = newLimit;
-
-  this._storage.each(function(element){   // Place the old items into the new storage
-    var key = Object.keys(element);
-    newStorage.insert(key[0], element[key]);
-  });
-
-  // Set the current hash to the new limit & storage
-  this._storage = newStorage;
+  this._storage = tempHashTable._storage;
+  this._limit = tempHashTable._limit;
 }
 
 HashTable.prototype.retrieve = function(k){
-  var i = getIndexBelowMaxForKey(k, this._limit);
+  var temp = null;
+  this._storage.each(function(element){
+    for(var key in element){
+      if(key === k){
+        temp = element[k];
+      }
+    }
+  });
+  return temp;
 
+  /*
+
+  var i = getIndexBelowMaxForKey(k, this._limit);
+  if(this._storage.get(i) === undefined) return null;
+  return this._storage.get(i)[k];*/
 };
 
 HashTable.prototype.remove = function(k){
+  if(k === "George")
+    debugger;
+  var i = getIndexBelowMaxForKey(k, this._limit);
+  this._storage.set(i, {});
+  this._filled--;
+  if(this._filled / this._limit < 0.25){  // Test to see if over 75% filled
+    this.resize(0.5);
+  }
 };
 
 
